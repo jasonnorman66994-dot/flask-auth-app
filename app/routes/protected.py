@@ -2,7 +2,7 @@
 Protected routes: public resources, posts CRUD, admin statistics.
 """
 from flask import Blueprint, request, jsonify
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
 from app.models import db, User, Post
 from app.middleware.auth import token_required, require_role
@@ -44,7 +44,7 @@ def get_posts(current_user):
         elif current_user.role == 'user':
             # Users see their own posts and public posts
             posts = Post.query.filter(
-                db.or_(
+                or_(
                     Post.author_id == current_user.id,
                     Post.visibility == 'public'
                 )
